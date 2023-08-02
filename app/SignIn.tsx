@@ -1,6 +1,4 @@
-// screens/SignInScreen.tsx
-
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextInput,
   View,
@@ -10,20 +8,34 @@ import {
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { signIn } from "../features/auth/authSlice";
+import SignUpScreen from "./SignUp";
 
-const fakeDatabase = [
-  { email: "test@example.com", password: "password123" },
-  { email: "user@example.com", password: "123456" },
-  // Add more fake data if needed...
-];
+type UserItem = {
+  id: number;
+  email: string;
+  password: string;
+};
 
 const SignInScreen: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignUpVisible, setIsSignUpVisible] = useState(false);
+  const [users, setUsers] = useState<UserItem[]>([]);
   const dispatch = useDispatch();
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://192.168.0.102:3000/users");
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   const handleSignIn = () => {
-    const user = fakeDatabase.find(
+    fetchUsers();
+    const user = users.find(
       (user) => user.email === email && user.password === password
     );
 
@@ -33,6 +45,10 @@ const SignInScreen: React.FC = () => {
       console.log("Invalid email or password");
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -50,6 +66,18 @@ const SignInScreen: React.FC = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
+      <Text>or</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          isSignUpVisible
+            ? setIsSignUpVisible(false)
+            : setIsSignUpVisible(true);
+        }}
+      >
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
+      {isSignUpVisible ? <SignUpScreen /> : null}
     </View>
   );
 };
