@@ -25,7 +25,7 @@ const SignInScreen: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://192.168.0.102:3000/users");
+      const response = await fetch("DATABASE/users");
       const data = await response.json();
       setUsers(data);
     } catch (error) {

@@ -21,7 +21,7 @@ const SignUpScreen: React.FC = () => {
   
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://192.168.0.102:3000/users");
+      const response = await fetch("DATABASE/users");
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -32,7 +32,7 @@ const SignUpScreen: React.FC = () => {
   const addUser = async () => {
     try {
       fetchUsers();
-      const response = await fetch("http://192.168.0.102:3000/users", {
+      const response = await fetch("DATABASE/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
